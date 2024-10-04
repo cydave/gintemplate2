@@ -1,0 +1,11 @@
+{{ define "navigation" }}
+<div class="ui huge inverted menu" style="border-radius: 0;">
+    <div class="ui container">
+        <a id="header-logo" class="header item" href="/">W Inc.</a>
+        <div class="right menu">
+            <a class="{{ if eq .activeNav "about" }}active{{ end }} item" href="/about">About</a>
+        </div>
+        <br/>
+    </div>
+</div>
+{{ end }}

@@ -1,0 +1,13 @@
+server:
+  host: '127.0.0.1'
+  port: 3000
+  proto: 'http'
+  domain: 'example.com'
+
+cookie:
+  secret: d2cbc8d14897ae2886bfdf6b0a99cb64  # openssl rand -hex 16
+  path: '/'
+  domain: '127.0.0.1'
+  max_age: 0
+  http_only: true
+  secure: false
