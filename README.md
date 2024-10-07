@@ -1,7 +1,5 @@
 # gintemplate2
 
-Smol template for gin.
-
 Smol template for [gin](https://github.com/gin-gonic/gin).
 
 + Static files hosting via [staticfs](https://github.com/cydave/staticfs)
