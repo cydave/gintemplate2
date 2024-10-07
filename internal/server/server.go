@@ -15,23 +15,8 @@ import (
 )
 
 func configureStaticFS(r *gin.Engine) error {
-	s := staticfs.New(assets.Static)
-	handler := s.Serve("/static")
-
-	alias := func(to string) gin.HandlerFunc {
-		return func(c *gin.Context) {
-			c.Request.URL.Path = "/static" + to
-			r.HandleContext(c)
-		}
-	}
-	for _, a := range getRootAssets() {
-		r.GET(a, alias(a))
-		r.HEAD(a, alias(a))
-	}
-
-	// Non top-level assets are mapped as expected.
-	r.GET("/static/*filepath", handler)
-	r.HEAD("/static/*filepath", handler)
+	s := staticfs.New(assets.Static).WithRootAliases()
+	s.Configure(r)
 	return nil
 }
 
