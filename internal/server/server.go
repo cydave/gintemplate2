@@ -15,7 +15,16 @@ import (
 )
 
 func configureStaticFS(r *gin.Engine) error {
-	s := staticfs.New(assets.Static).WithRootAliases()
+	// Set caching headers for resources that are found.
+	okCallback := func(c *gin.Context, path string) {
+		c.Header("Cache-Control", "private, max-age=3600")
+	}
+	// Set no-cache headers for resources that were not found.
+	errCallback := func(c *gin.Context, err error) {
+		c.Header("Pragma", "no-cache")
+		c.Header("Cache-Control", "private, no-cache")
+	}
+	s := staticfs.New(assets.Static).WithRootAliases().WithOKCallback(okCallback).WithErrCallback(errCallback)
 	s.Configure(r)
 	return nil
 }
