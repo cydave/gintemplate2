@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/cydave/staticfs"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
@@ -14,9 +15,23 @@ import (
 )
 
 func configureStaticFS(r *gin.Engine) error {
-	hdlr := ServeStaticFS("/static", assets.Static)
-	r.GET("/static/*filepath", hdlr)
-	r.HEAD("/static/*filepath", hdlr)
+	s := staticfs.New(assets.Static)
+	handler := s.Serve("/static")
+
+	alias := func(to string) gin.HandlerFunc {
+		return func(c *gin.Context) {
+			c.Request.URL.Path = "/static" + to
+			r.HandleContext(c)
+		}
+	}
+	for _, a := range getRootAssets() {
+		r.GET(a, alias(a))
+		r.HEAD(a, alias(a))
+	}
+
+	// Non top-level assets are mapped as expected.
+	r.GET("/static/*filepath", handler)
+	r.HEAD("/static/*filepath", handler)
 	return nil
 }
 

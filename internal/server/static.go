@@ -1,44 +1,25 @@
 package server
 
 import (
-	"embed"
-	"net/http"
-	"os"
-	"path/filepath"
+	"io/fs"
+	"log"
 
-	"github.com/gin-gonic/gin"
+	"github.com/cydave/gintemplate2/internal/assets"
 )
 
-type staticFS struct {
-	root http.FileSystem
-}
-
-func (s *staticFS) Open(name string) (http.File, error) {
-	f, err := s.root.Open(name)
+// Get root assets in the static FS. Every file that is in the top-level
+// directory is returned.
+func getRootAssets() []string {
+	ret := make([]string, 0)
+	entries, err := fs.ReadDir(assets.Static, "static")
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
-	info, err := f.Stat()
-	if err != nil {
-		return nil, err
-	}
-	if info.IsDir() {
-		return nil, os.ErrNotExist
-	}
-	return f, nil
-}
-
-func ServeStaticFS(prefix string, static embed.FS) gin.HandlerFunc {
-	sfs := &staticFS{http.FS(static)}
-	return func(c *gin.Context) {
-		file := c.Param("filepath")
-		fp := filepath.Join(prefix, filepath.Clean(file))
-		f, err := sfs.Open(fp)
-		if err != nil {
-			c.Writer.WriteHeader(http.StatusNotFound)
-			return
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
 		}
-		f.Close()
-		http.FileServer(sfs).ServeHTTP(c.Writer, c.Request)
+		ret = append(ret, "/"+entry.Name())
 	}
+	return ret
 }

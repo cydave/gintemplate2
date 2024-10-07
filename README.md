@@ -2,9 +2,10 @@
 
 Smol template for gin.
 
-+ Static files (go embed)
-+ Static files hosting via StaticFS
+Smol template for [gin](https://github.com/gin-gonic/gin).
+
++ Static files hosting via [staticfs](https://github.com/cydave/staticfs)
 + Templates shipped with binary (go embed)
 + sqlite3 with db set to /tmp/data.db
-+ configuration handling via viper (config.yaml)
-+ cookie based sessions
++ configuration file via [viper](https://github.com/spf13/viper)
++ cookie based session via [gin-contrib/sessions/cookie](https://github.com/gin-contrib/sessions/cookie)
